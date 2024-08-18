@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="container mt-5">
-    <h1>RHShop</h1>
+    <h1>IDShop</h1>
     <p class="animate__animated animate__fadeInRight">
       Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sapiente laborum
       nihil atque, aut cum vitae, iste iusto accusamus aliquid obcaecati nemo,
