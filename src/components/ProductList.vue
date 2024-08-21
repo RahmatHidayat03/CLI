@@ -13,7 +13,7 @@
       :data-index="index"
     >
       <div class="col-1 m-auto">
-        <button class="btn btn-info" @click="$emit('add', item)">+</button>
+        <button class="btn btn-info" @click="$emit('add-item', item)">+</button>
       </div>
       <div class="col-sm-4">
         <img :src="item.image" :alt="item.name" class="img-fluid d-block" />
@@ -37,17 +37,7 @@ export default {
   components: {
     Price,
   },
-  props: {
-    products: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-    maximum: {
-      type: Number,
-      required: true,
-    },
-  },
+  props: ["products", "maximum"],
   computed: {
     showItem() {
       // Pastikan 'products' adalah array sebelum mencoba memfilter
@@ -80,13 +70,12 @@ export default {
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease-in-out;
-}
-
 .fade-enter,
 .fade-leave-to {
+  opacity: 0.5;
+}
+.fade-enter-active,
+.fade-leave-action {
   opacity: 0;
 }
 </style>

@@ -1,34 +1,40 @@
 <template>
   <div id="app" class="container mt-5">
-    <h1>IDShop</h1>
-    <p class="animate__animated animate__fadeInRight">
-      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sapiente laborum
-      nihil atque, aut cum vitae, iste iusto accusamus aliquid obcaecati nemo,
-      temporibus nostrum magnam aperiam accusantium nesciunt dolorum dicta nisi!
-    </p>
-    <product-list
-      v-if="products.length > 0"
+    <checkout-component 
+      :cart="cart"
+      :cartTotal="cartTotal"
+      @add="addItem"
+      @delete="deleteItem"></checkout-component>
+    <products-component
+      :cart="cart"
+      :cart-qty="cartQty"
+      :cart-total="cartTotal"
+      :maximum.sync="maximum"
       :products="products"
-      :maximum="50"
-    ></product-list>
-    <p v-else>Loading products...</p>
-    <!-- <Product-list :product="products" :maximum="maximum"></Product-list> -->
+      :slider-status="sliderStatus"
+      @toggle="ToggleSliderStatus"
+      @add="addItem"
+      @delete="deleteItem"></products-component>
   </div>
 </template>
 
 <script>
-import ProductList from "./components/ProductList.vue";
+import checkoutComponent from './components/checkoutComponent.vue';
+import ProductsComponent from './components/ProductsComponent.vue';
 
 export default {
   name: "app",
-  data: function () {
+  data() {
     return {
       maximum: 50,
       products: [],
+      cart: [],
+      sliderStatus: false,
     };
   },
   components: {
-    ProductList,
+    checkoutComponent,
+    ProductsComponent
   },
   mounted() {
     fetch("https://hplussport.com/api/products/order/price")
@@ -36,6 +42,51 @@ export default {
       .then((data) => {
         this.products = data;
       });
+  },
+  computed: {
+    cartTotal: function () {
+      let sum = 0;
+      for (let key in this.cart) {
+        sum = sum + this.cart[key].product.price * this.cart[key].qty;
+      }
+      return sum;
+    },
+    cartQty: function () {
+      let qty = 0;
+      for (let key in this.cart) {
+        qty = qty + this.cart[key].qty;
+      }
+      return qty;
+    },
+  },
+  methods: {
+    ToggleSliderStatus() {
+      this.sliderStatus = !this.sliderStatus;
+    },
+    addItem: function (product) {
+      let productIndex;
+      let productExist = this.cart.filter(function (item, index) {
+        if (item.product.id == Number(product.id)) {
+          productIndex = index;
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      if (productExist.length) {
+        this.cart[productIndex].qty++;
+      } else {
+        this.cart.push({ product: product, qty: 1 });
+      }
+    },
+    deleteItem: function (id) {
+      if (this.cart[id].qty > 1) {
+        this.cart[id].qty--;
+      } else {
+        this.cart.splice(id, 1);
+      }
+    },
   },
 };
 </script>
